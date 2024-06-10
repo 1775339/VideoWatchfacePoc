@@ -1,4 +1,5 @@
- package com.titan.titanvideotrimmingpoc
+package com.titan.titanvideotrimmingpoc
+
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.database.Cursor
@@ -24,7 +25,7 @@ import com.titan.titanvideotrimmingpoc.databinding.FragmentFirstBinding
 import java.io.File
 
 
- /**
+/**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 @UnstableApi
@@ -32,7 +33,7 @@ class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
     var player: ExoPlayer? = null
-    var videoPathUri:String?=null
+    var videoPathUri: String? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -42,7 +43,7 @@ class FirstFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.i("sagar video poc","onCreateView")
+        Log.i("sagar video poc", "onCreateView")
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -50,7 +51,7 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.i("sagar video poc","onViewCreated")
+        Log.i("sagar video poc", "onViewCreated")
         binding.buttonFirst.setOnClickListener {
 
             val intent = Intent(
@@ -64,7 +65,7 @@ class FirstFragment : Fragment() {
             videoPathUri?.let {
                 val bundle = Bundle()
                 bundle.putString("ORIGINAL_VIDEO_PATH", it)
-                findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment,bundle)
+                findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
             } ?: Toast.makeText(
                 requireContext(),
                 "file path is null",
@@ -75,8 +76,8 @@ class FirstFragment : Fragment() {
         setFragmentResultListener("video") { requestKey, bundle ->
             if (requestKey == "video") {
                 val path = bundle.getString("path", "unknown")
-                Log.i("sagar video poc","videoPath trimmed $path")
-                binding.playerView.visibility=View.VISIBLE
+                Log.i("sagar video poc", "videoPath trimmed $path")
+                binding.playerView.visibility = View.VISIBLE
                 preparePlayer(path)
 //                viewModel.updateVideoFile(File(path))
             }
@@ -90,9 +91,9 @@ class FirstFragment : Fragment() {
                 2 -> {
                     val videoUri: Uri = data?.data!!
                     val videoPath = parsePath(videoUri)
-                    videoPathUri=videoPath
+                    videoPathUri = videoPath
                     videoPath?.let {
-                        binding.playerView.visibility=View.VISIBLE
+                        binding.playerView.visibility = View.VISIBLE
                         preparePlayer(it)
                     }
                     Log.d("TAG", "$videoPath is the path that you need...")
@@ -101,7 +102,8 @@ class FirstFragment : Fragment() {
         }
 //        Log.d("SelectedVideoPath", videoPath)
     }
-    fun preparePlayer(videoFilePath: String){
+
+    fun preparePlayer(videoFilePath: String) {
         player?.release()
         player = ExoPlayer.Builder(requireContext()).build()
 //        val mediaItem = MediaItem.fromUri(uri!!)
@@ -116,6 +118,7 @@ class FirstFragment : Fragment() {
         player?.repeatMode = Player.REPEAT_MODE_ONE
         player?.play()
     }
+
     fun parsePath(uri: Uri?): String? {
         val projection = arrayOf(MediaStore.Video.Media.DATA)
         val cursor: Cursor? = context?.contentResolver?.query(uri!!, projection, null, null, null)
@@ -126,53 +129,54 @@ class FirstFragment : Fragment() {
             cursor.getString(columnIndex)
         } else null
     }
+
     override fun onDestroyView() {
-        Log.i("sagar video poc","onDestroyView")
+        Log.i("sagar video poc", "onDestroyView")
 
         super.onDestroyView()
         _binding = null
     }
 
-     override fun onCreate(savedInstanceState: Bundle?) {
-         Log.i("sagar video poc","onCreate")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i("sagar video poc", "onCreate")
 
-         super.onCreate(savedInstanceState)
-     }
+        super.onCreate(savedInstanceState)
+    }
 
-     override fun onStart() {
-         Log.i("sagar video poc","onStart")
+    override fun onStart() {
+        Log.i("sagar video poc", "onStart")
 
-         super.onStart()
-     }
+        super.onStart()
+    }
 
-     override fun onResume() {
-         Log.i("sagar video poc","onResume")
+    override fun onResume() {
+        Log.i("sagar video poc", "onResume")
 
-         super.onResume()
-     }
+        super.onResume()
+    }
 
-     override fun onPause() {
-         Log.i("sagar video poc","onPause")
+    override fun onPause() {
+        Log.i("sagar video poc", "onPause")
 
-         super.onPause()
-     }
+        super.onPause()
+    }
 
-     override fun onStop() {
-         Log.i("sagar video poc","onStop")
+    override fun onStop() {
+        Log.i("sagar video poc", "onStop")
 
-         super.onStop()
-     }
+        super.onStop()
+    }
 
-     override fun onDestroy() {
-         Log.i("sagar video poc","onDestroy")
+    override fun onDestroy() {
+        Log.i("sagar video poc", "onDestroy")
 
-         super.onDestroy()
-     }
+        super.onDestroy()
+    }
 
-     override fun onDetach() {
-         Log.i("sagar video poc","onDetach")
+    override fun onDetach() {
+        Log.i("sagar video poc", "onDetach")
 
-         super.onDetach()
-     }
+        super.onDetach()
+    }
 
 }

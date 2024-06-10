@@ -58,8 +58,7 @@ class TrimVideoFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
@@ -134,11 +133,11 @@ class TrimVideoFragment : Fragment() {
 //        }
 
         viewBinding.seekBar.setOnRangeChangedListener(mOnRangeChangedListener)
-        viewBinding.cropDone.setOnClickListener{
-            val context=context
+        viewBinding.cropDone.setOnClickListener {
+            val context = context
             context?.let {
-                viewModel.cropVideo(it) {videoPath,_->
-                    Log.i("sagar video poc","videoPath cropped $videoPath")
+                viewModel.cropVideo(it) { videoPath, _ ->
+                    Log.i("sagar video poc", "videoPath cropped $videoPath")
                     findNavController().navigateUp()
                     setFragmentResult("video", Bundle().apply {
                         putString("path", videoPath)
@@ -332,9 +331,7 @@ class TrimVideoFragment : Fragment() {
             if (bundle.containsKey("ORIGINAL_VIDEO_PATH")) {
                 videoPath = bundle.getString("ORIGINAL_VIDEO_PATH")
                 Toast.makeText(
-                    requireContext(),
-                    "file path is $videoPath",
-                    Toast.LENGTH_SHORT
+                    requireContext(), "file path is $videoPath", Toast.LENGTH_SHORT
                 ).show()
             }
 
