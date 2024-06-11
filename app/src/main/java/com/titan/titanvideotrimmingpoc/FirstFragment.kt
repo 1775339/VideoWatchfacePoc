@@ -5,6 +5,8 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +16,7 @@ import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
@@ -22,7 +25,14 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
 
 import com.titan.titanvideotrimmingpoc.databinding.FragmentFirstBinding
+import com.titan.titanvideotrimmingpoc.video.trim.ExtractFrameWorkThread
+import com.titan.titanvideotrimmingpoc.video.trim.ExtractTimmedFramesWorkThread
+import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoViewModel
+import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbImg
+import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbSpacingItemDecoration
+import com.titan.titanvideotrimmingpoc.widget.dp
 import java.io.File
+import java.lang.ref.WeakReference
 
 
 /**
@@ -38,6 +48,17 @@ class FirstFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private var mExtractFrameWorkThread: ExtractTimmedFramesWorkThread? = null
+    private val viewModel: TrimVideoViewModel by viewModels()
+    private val thumbSpacingItemDecoration = VideoThumbSpacingItemDecoration(56.dp())
+
+    companion object {
+
+        private const val MAX_COUNT_RANGE = 10 //seekBar的区域内一共有多少张图片
+
+        private val MARGIN: Int = 56.dp()
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +73,7 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i("sagar video poc", "onViewCreated")
+        initData()
         binding.buttonFirst.setOnClickListener {
 
             val intent = Intent(
@@ -80,6 +102,35 @@ class FirstFragment : Fragment() {
                 binding.playerView.visibility = View.VISIBLE
                 preparePlayer(path)
 //                viewModel.updateVideoFile(File(path))
+            }
+        }
+    }
+
+    private fun initData() {
+        binding.buttonVideoFrames.setOnClickListener {
+            videoPathUri?.let { path ->
+                val maxSeconds = 5
+                val max = maxSeconds * 1000L
+
+                val duration = viewModel.start(path, max)
+
+                val thumbnailsCount: Int = if (duration <= max) {
+                    MAX_COUNT_RANGE
+                } else {
+                    (duration * 1.0f / max * MAX_COUNT_RANGE).toInt()
+                }
+
+                thumbSpacingItemDecoration.count = thumbnailsCount
+
+                val outputDir = requireContext().externalCacheDir ?: requireContext().cacheDir
+                val outputDirPath = outputDir.absolutePath +File.separator + "TimmedVideoImages/"
+                path.let { path ->
+                    mExtractFrameWorkThread = ExtractTimmedFramesWorkThread(
+                        mUIHandler, path, outputDirPath, 0, duration, thumbnailsCount
+                    )
+                }
+
+                mExtractFrameWorkThread?.start()
             }
         }
     }
@@ -130,11 +181,33 @@ class FirstFragment : Fragment() {
         } else null
     }
 
+    private val mUIHandler = MainTrimHandler(this)
+
+    private class MainTrimHandler(activity: FirstFragment) : Handler() {
+
+        private val mActivity: WeakReference<FirstFragment>
+
+        init {
+            mActivity = WeakReference<FirstFragment>(activity)
+        }
+
+        override fun handleMessage(msg: Message) {
+            val activity: FirstFragment? = mActivity.get()
+            if (activity != null) {
+                if (msg.what == ExtractTimmedFramesWorkThread.MSG_FRAME_SAVE_SUCCESS) {
+                    val info = msg.obj as ArrayList<VideoThumbImg>
+                    Log.i("sagar video poc","timmed frames $info")
+//                    activity.videoEditAdapter.addItemVideoInfo(info)
+                }
+            }
+        }
+    }
+
     override fun onDestroyView() {
         Log.i("sagar video poc", "onDestroyView")
 
         super.onDestroyView()
-        _binding = null
+//        _binding = nullm
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

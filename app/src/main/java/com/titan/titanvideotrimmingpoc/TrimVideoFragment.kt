@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.titan.titanvideotrimmingpoc.databinding.FragmentSecondBinding
 import com.titan.titanvideotrimmingpoc.video.trim.ExtractFrameWorkThread
+import com.titan.titanvideotrimmingpoc.video.trim.ExtractTimmedFramesWorkThread
 import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoAdapter
 import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoViewModel
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbImg

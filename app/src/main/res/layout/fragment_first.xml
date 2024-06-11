@@ -26,8 +26,17 @@
             android:layout_height="wrap_content"
             android:text="Trim Video"
             app:layout_constraintBottom_toTopOf="@id/textview_first"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/button_video_frames"
             app:layout_constraintStart_toEndOf="@+id/button_first"
+            app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/button_video_frames"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Video Frames"
+            app:layout_constraintBottom_toTopOf="@id/textview_first"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button_trim_video"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
