@@ -288,6 +288,16 @@ class TrimVideoFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        videoPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        videoStart()
+    }
+
     private val mUIHandler = MainHandler(this)
 
     private class MainHandler(activity: TrimVideoFragment) : Handler() {

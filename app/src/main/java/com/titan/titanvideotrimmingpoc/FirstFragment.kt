@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -25,7 +24,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
 
 import com.titan.titanvideotrimmingpoc.databinding.FragmentFirstBinding
-import com.titan.titanvideotrimmingpoc.video.trim.ExtractFrameWorkThread
 import com.titan.titanvideotrimmingpoc.video.trim.ExtractTimmedFramesWorkThread
 import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoViewModel
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbImg
@@ -51,6 +49,7 @@ class FirstFragment : Fragment() {
     private var mExtractFrameWorkThread: ExtractTimmedFramesWorkThread? = null
     private val viewModel: TrimVideoViewModel by viewModels()
     private val thumbSpacingItemDecoration = VideoThumbSpacingItemDecoration(56.dp())
+    private var trimmedVideoPath:String?=null
 
     companion object {
 
@@ -73,7 +72,7 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i("sagar video poc", "onViewCreated")
-        initData()
+        initViews()
         binding.buttonFirst.setOnClickListener {
 
             val intent = Intent(
@@ -98,6 +97,7 @@ class FirstFragment : Fragment() {
         setFragmentResultListener("video") { requestKey, bundle ->
             if (requestKey == "video") {
                 val path = bundle.getString("path", "unknown")
+                trimmedVideoPath=path
                 Log.i("sagar video poc", "videoPath trimmed $path")
                 binding.playerView.visibility = View.VISIBLE
                 preparePlayer(path)
@@ -106,9 +106,9 @@ class FirstFragment : Fragment() {
         }
     }
 
-    private fun initData() {
+    private fun initViews() {
         binding.buttonVideoFrames.setOnClickListener {
-            videoPathUri?.let { path ->
+            trimmedVideoPath?.let { path ->
                 val maxSeconds = 5
                 val max = maxSeconds * 1000L
 
@@ -230,7 +230,7 @@ class FirstFragment : Fragment() {
 
     override fun onPause() {
         Log.i("sagar video poc", "onPause")
-
+        player?.release()
         super.onPause()
     }
 
