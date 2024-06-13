@@ -22,15 +22,22 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
-
+import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.ReturnCode
+import com.coder.ffmpeg.call.IFFmpegCallBack
+import com.coder.ffmpeg.jni.FFmpegCommand
 import com.titan.titanvideotrimmingpoc.databinding.FragmentFirstBinding
 import com.titan.titanvideotrimmingpoc.video.trim.ExtractTimmedFramesWorkThread
 import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoViewModel
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbImg
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbSpacingItemDecoration
 import com.titan.titanvideotrimmingpoc.widget.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.ref.WeakReference
+import java.util.Date
 
 
 /**
@@ -49,7 +56,7 @@ class FirstFragment : Fragment() {
     private var mExtractFrameWorkThread: ExtractTimmedFramesWorkThread? = null
     private val viewModel: TrimVideoViewModel by viewModels()
     private val thumbSpacingItemDecoration = VideoThumbSpacingItemDecoration(56.dp())
-    private var trimmedVideoPath:String?=null
+    private var trimmedVideoPath: String? = null
 
     companion object {
 
@@ -97,7 +104,7 @@ class FirstFragment : Fragment() {
         setFragmentResultListener("video") { requestKey, bundle ->
             if (requestKey == "video") {
                 val path = bundle.getString("path", "unknown")
-                trimmedVideoPath=path
+                trimmedVideoPath = path
                 Log.i("sagar video poc", "videoPath trimmed $path")
                 binding.playerView.visibility = View.VISIBLE
                 preparePlayer(path)
@@ -123,7 +130,7 @@ class FirstFragment : Fragment() {
                 thumbSpacingItemDecoration.count = thumbnailsCount
 
                 val outputDir = requireContext().externalCacheDir ?: requireContext().cacheDir
-                val outputDirPath = outputDir.absolutePath +File.separator + "TimmedVideoImages/"
+                val outputDirPath = outputDir.absolutePath + File.separator + "TimmedVideoImages/"
                 path.let { path ->
                     mExtractFrameWorkThread = ExtractTimmedFramesWorkThread(
                         mUIHandler, path, outputDirPath, 0, duration, thumbnailsCount
@@ -132,6 +139,10 @@ class FirstFragment : Fragment() {
 
                 mExtractFrameWorkThread?.start()
             }
+        }
+        binding.buttonVideoGif.setOnClickListener {
+//                convertVideoToGif()
+            getVideoGif()
         }
     }
 
@@ -170,6 +181,121 @@ class FirstFragment : Fragment() {
         player?.play()
     }
 
+    private fun getVideoGif(){
+//        val num = Random.nextInt(4600)
+//        val outputFile = File(getExternalFilesDir(null), "output$num.gif")
+//        val outPutFilePath = outputFile.absolutePath
+       /* val outputFile =
+            context?.cacheDir.toString() + File.separator + "${Date().time}_target.gif"*/
+        val outputFile =
+            context?.externalCacheDir.toString() + File.separator + "${Date().time}_target.gif"
+
+        trimmedVideoPath?.let { inputFilePath->
+//            val ffmpegCommand = "-i $inputFilePath $outputFile"
+//            val ffmpegCommand = "-i $inputFilePath -t 5 -r 12 -s 466:466 $outputFile"
+            val ffmpegCommand = "-i $inputFilePath -r 24 -s 480:480 $outputFile"
+
+
+            FFmpegKit.executeAsync(ffmpegCommand) { session ->
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (ReturnCode.isSuccess(session.returnCode)) {
+                        // SUCCESS
+                        Toast.makeText(
+                            requireContext(),
+                            "gif conversion SUCCESS",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        // FAILURE
+                        Toast.makeText(
+                            requireContext(),
+                            "gif conversion FAILURE",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    private fun convertVideoToGif() {
+        videoPathUri?.let { inputFile ->
+            val outputFile =
+                context?.cacheDir.toString() + File.separator + "${Date().time}_target.gif"
+            var cmd = ""
+            cmd =
+                "ffmpeg -y -i $inputFile -vf scale=466:466 -q:v 5 -b:v 2M -r 12 -f gif $outputFile"
+            if (false) {
+                cmd =
+                    "ffmpeg -y -i $inputFile -vf scale=480:480 -q:v 5 -b:v 2M -r 12 -f gif $outputFile"
+            }
+
+//            val command = cmd.split("\\s".toRegex()).toTypedArray<String?>()
+            val command = cmd.split(" ").toTypedArray<String?>()
+
+//            cmd = "ffmpeg -y" + " -i " + inputFile + " -vf scale=466:466 -q:v 5 -b:v 2M -r 12" + " -f gif " + outputFile;
+
+            FFmpegCommand.runCmd(command, object : IFFmpegCallBack {
+                override fun onCancel() {
+                    Log.e("sagar v", "gif on error onCancel")
+                }
+
+                override fun onComplete() {
+                    try {
+                        Log.e("sagar v", "gif completed successfully")
+//                        SM.spSaveBoolean(context, "isRunVideo", false);
+//                        callback.onFinishTrim(outputFile);
+                    } catch (e: Exception) {
+                        Log.e("sagar v", "gif completed catch block")
+                    }
+                }
+
+                override fun onError(errorCode: Int, errorMsg: String?) {
+                    Log.e("sagar v", "gif on error errorCode$errorCode errorMsg$errorMsg")
+                }
+
+                override fun onProgress(progress: Int, pts: Long) {
+                    Log.e("runcmd", "progress$progress")
+
+                }
+
+                override fun onStart() {
+                }
+
+            })
+            /* try {
+                 FFmpegCommand.runCmd(command, object : IFFmpegCallBack() {
+                     fun onStart() {}
+                     fun onProgress(progress: Int, pts: Long) {
+                         Log.e("runcmd", "progress$progress")
+                     }
+
+                     fun onCancel() {
+                         callback.onCancel()
+                     }
+
+                     fun onComplete() {
+                         try {
+                             SM.spSaveBoolean(context, "isRunVideo", false)
+ //                            callback.onFinishTrim(outputFile)
+                         } catch (e: Exception) {
+                         }
+                     }
+
+                     fun onError(errorCode: Int, errorMsg: String?) {
+ //                        callback.onError()
+                     }
+                 })
+             } catch (e: Exception) {
+                 e.printStackTrace()
+             }
+         }*/
+
+        }
+    }
+
     fun parsePath(uri: Uri?): String? {
         val projection = arrayOf(MediaStore.Video.Media.DATA)
         val cursor: Cursor? = context?.contentResolver?.query(uri!!, projection, null, null, null)
@@ -196,7 +322,7 @@ class FirstFragment : Fragment() {
             if (activity != null) {
                 if (msg.what == ExtractTimmedFramesWorkThread.MSG_FRAME_SAVE_SUCCESS) {
                     val info = msg.obj as ArrayList<VideoThumbImg>
-                    Log.i("sagar video poc","timmed frames $info")
+                    Log.i("sagar video poc", "timmed frames $info")
 //                    activity.videoEditAdapter.addItemVideoInfo(info)
                 }
             }

@@ -25,7 +25,9 @@ import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbImg
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbSpacingItemDecoration
 import com.titan.titanvideotrimmingpoc.widget.RangeSeekBar
 import com.titan.titanvideotrimmingpoc.widget.dp
+import java.io.File
 import java.lang.ref.WeakReference
+import java.util.Date
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.

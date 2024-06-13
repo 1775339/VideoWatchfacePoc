@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.titan.titanvideotrimmingpoc"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -83,6 +83,16 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation ("com.github.bumptech.glide:glide:4.11.0")
+
+//    implementation ("com.caixin.code:ffmpeg:1.0.0")
+//    implementation ("com.caixin.code:ImagePicker:1.0.1")
+//    implementation ("com.arthenica:mobile-ffmpeg-full:4.4")
+//    implementation ("com.qiwo:bluetoothsdk:2.5.0")
+//    implementation ("com.arthenica:mobile-ffmpeg-full:4.4")
+    implementation ("com.caixin.code:ffmpeg:1.0.0")
+    implementation ("com.caixin.code:ImagePicker:1.0.1")
+    implementation ("com.arthenica:ffmpeg-kit-full:5.1")
+
 
 
 //    implementation("com.github.bumptech.glide:compiler:4.11.0")
