@@ -1,4 +1,3 @@
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -56,9 +55,9 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation ("androidx.media3:media3-exoplayer:1.3.1")
-    implementation ("androidx.media3:media3-ui:1.3.1")
-    implementation ("androidx.media3:media3-common:1.3.1")
+    implementation("androidx.media3:media3-exoplayer:1.3.1")
+    implementation("androidx.media3:media3-ui:1.3.1")
+    implementation("androidx.media3:media3-common:1.3.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     // For control over item selection of both touch and mouse driven selection
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
@@ -82,17 +81,18 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation ("com.github.bumptech.glide:glide:4.11.0")
+    implementation("com.github.bumptech.glide:glide:4.11.0")
 
 //    implementation ("com.caixin.code:ffmpeg:1.0.0")
 //    implementation ("com.caixin.code:ImagePicker:1.0.1")
 //    implementation ("com.arthenica:mobile-ffmpeg-full:4.4")
 //    implementation ("com.qiwo:bluetoothsdk:2.5.0")
 //    implementation ("com.arthenica:mobile-ffmpeg-full:4.4")
-    implementation ("com.caixin.code:ffmpeg:1.0.0")
-    implementation ("com.caixin.code:ImagePicker:1.0.1")
-    implementation ("com.arthenica:ffmpeg-kit-full:5.1")
-
+    implementation("com.huawo.code:ffmpeg:1.0.1")
+    implementation("com.huawo.code:ImagePicker:1.0.1")
+    /* implementation ("com.caixin.code:ffmpeg:1.0.0")
+     implementation ("com.caixin.code:ImagePicker:1.0.1")*/
+    implementation("com.arthenica:ffmpeg-kit-full:5.1")
 
 
 //    implementation("com.github.bumptech.glide:compiler:4.11.0")

@@ -1,6 +1,7 @@
 package com.titan.titanvideotrimmingpoc
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
@@ -26,6 +27,10 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import com.coder.ffmpeg.call.IFFmpegCallBack
 import com.coder.ffmpeg.jni.FFmpegCommand
+import com.coder.ffmpeg.jni.FFmpegCommand.runCmd
+import com.github.gzuliyujiang.imagepicker.SP
+//import com.coder.ffmpeg.call.IFFmpegCallBack
+//import com.coder.ffmpeg.jni.FFmpegCommand
 import com.titan.titanvideotrimmingpoc.databinding.FragmentFirstBinding
 import com.titan.titanvideotrimmingpoc.video.trim.ExtractTimmedFramesWorkThread
 import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoViewModel
@@ -142,7 +147,8 @@ class FirstFragment : Fragment() {
         }
         binding.buttonVideoGif.setOnClickListener {
 //                convertVideoToGif()
-            getVideoGif()
+//            getVideoGif()
+            hawoConvertVideoToGif()
         }
     }
 
@@ -219,7 +225,72 @@ class FirstFragment : Fragment() {
         }
 
     }
+    private fun hawoConvertVideoToGif(){
+        trimmedVideoPath?.let{
 
+            /*val outputFile =
+                context?.externalCacheDir.toString() + File.separator + "${Date().time}_haw_target.gif"*/
+            val outputFile =
+                context?.cacheDir.toString() + File.separator + "${Date().time}_haw_target.gif"
+            dealGif(requireContext(),it,outputFile,"","")
+        }
+    }
+    private var startX = 0
+    private var startY = 0
+    fun dealGif(
+        context: Context?,
+        inputFile: String,
+        outputFile: String,
+        start: String?,
+        duration: String?,
+//        callback: VideoTrimListener
+    ): String? {
+        var cmd = ""
+        startX= SP.spLoadInt(context, "startX");
+        startY=SP.spLoadInt(context, "startY");
+        cmd =
+            "ffmpeg -y -i $inputFile -vf crop=466:466:$startX:$startY -q:v 5 -b:v 1M -r 12 -f gif $outputFile"
+
+        if (false) {
+            cmd =
+                "ffmpeg -y" + " -i " + inputFile + " -vf crop=480:480:" + startX + ":" + startY + " -q:v 5 -b:v 1M -r 12" + " -f gif " + outputFile
+        }
+        Log.e("sagar haw gif", "cmd$cmd")
+        val command: Array<String?> = cmd.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+            .toTypedArray() //以空格分割为字符串数组
+        try {
+            runCmd(command, object : IFFmpegCallBack {
+                override fun onStart() {}
+                override fun onProgress(progress: Int, pts: Long) {
+                    Log.e("sagar haw gif", "progress$progress")
+                }
+
+                override fun onCancel() {
+//                    callback.onCancel()
+                    Log.e("sagar haw gif", "onCancel")
+                }
+
+                override fun onComplete() {
+                    try {
+//                        SM.spSaveBoolean(context, "isRunVideo", false)
+//                        callback.onFinishTrim(outputFile)
+                        Log.e("sagar haw gif", "onComplete")
+
+                    } catch (e: java.lang.Exception) {
+                    }
+                }
+
+                override fun onError(errorCode: Int, errorMsg: String?) {
+//                    callback.onError()
+                    Log.e("sagar haw gif", "onError")
+
+                }
+            })
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        return ""
+    }
     private fun convertVideoToGif() {
         videoPathUri?.let { inputFile ->
             val outputFile =
