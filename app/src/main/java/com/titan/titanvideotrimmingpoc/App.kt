@@ -1,13 +1,22 @@
 package com.titan.titanvideotrimmingpoc
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import android.content.Context
+import com.titan.titanvideotrimmingpoc.video.trim.ApplicationHolder
 
 class App : Application() {
+
     override fun onCreate() {
         super.onCreate()
+
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 //        initLogger()
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        ApplicationHolder.sApplication = this
+
     }
 
 //    private fun initLogger() {

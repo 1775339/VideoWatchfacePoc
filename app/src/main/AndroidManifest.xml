@@ -30,6 +30,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".video.trim.VideoTrimmerActivity"
+            android:launchMode="singleTop"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

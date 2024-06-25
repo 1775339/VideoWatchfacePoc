@@ -93,6 +93,10 @@ dependencies {
     /* implementation ("com.caixin.code:ffmpeg:1.0.0")
      implementation ("com.caixin.code:ImagePicker:1.0.1")*/
     implementation("com.arthenica:ffmpeg-kit-full:5.1")
+    implementation("com.github.iknow4:android-utils-sdk:1.1.2")
+    implementation ("io.reactivex.rxjava2:rxjava:2.2.21")
+
+
 
 
 //    implementation("com.github.bumptech.glide:compiler:4.11.0")

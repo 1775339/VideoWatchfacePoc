@@ -1,5 +1,6 @@
 package com.titan.titanvideotrimmingpoc
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -36,6 +37,7 @@ import com.titan.titanvideotrimmingpoc.video.trim.ExtractTimmedFramesWorkThread
 import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoViewModel
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbImg
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbSpacingItemDecoration
+import com.titan.titanvideotrimmingpoc.video.trim.VideoTrimmerActivity
 import com.titan.titanvideotrimmingpoc.widget.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,6 +96,9 @@ class FirstFragment : Fragment() {
             intent.type = "video/*"
             startActivityForResult(intent, 2)
         }
+        binding.buttonVideoCrop.setOnClickListener {
+                videoToGifHw(requireContext())
+        }
         binding.buttonTrimVideo.setOnClickListener {
             videoPathUri?.let {
                 val bundle = Bundle()
@@ -151,7 +156,19 @@ class FirstFragment : Fragment() {
             hawoConvertVideoToGif()
         }
     }
-
+    fun videoToGifHw(context: Context) {
+        videoPathUri?.let {
+            VideoTrimmerActivity.call(
+                context,
+                it,
+                666
+            )
+        } ?: Toast.makeText(
+            requireContext(),
+            "file path is null",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {

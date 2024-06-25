@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:text="video"
             app:layout_constraintBottom_toTopOf="@id/textview_first"
-            app:layout_constraintStart_toEndOf="@+id/button_trim_video"
+            app:layout_constraintRight_toLeftOf="@+id/button_trim_video"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         <Button
@@ -45,9 +45,18 @@
             android:layout_height="wrap_content"
             android:text="Video To Gif"
             app:layout_constraintBottom_toTopOf="@id/textview_first"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/button_video_frames"
             app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/button_video_crop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crop"
+            app:layout_constraintTop_toBottomOf="@id/button_first"
+            app:layout_constraintRight_toRightOf="@+id/button_first"
+            app:layout_constraintLeft_toLeftOf="@+id/button_first"
+            />
 
         <TextView
             android:id="@+id/textview_first"
