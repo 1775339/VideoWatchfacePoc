@@ -209,7 +209,7 @@ class VideoTrimmerActivity : AppCompatActivity() {
         bundle1.putString("path", `in`)
         intent.putExtras(bundle1)
         setResult(RESULT_OK, intent)
-        finish() //关闭BActivity文件并回调数据
+        finish() //BaseActivity
         if (VideoTrimmerUtil.videoTrimListener != null) {
             VideoTrimmerUtil.videoTrimListener.onFinishTrim(`in`)
         }

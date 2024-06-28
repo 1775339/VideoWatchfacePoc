@@ -18,6 +18,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
@@ -26,6 +28,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
+import com.bumptech.glide.Glide
 import com.coder.ffmpeg.call.IFFmpegCallBack
 import com.coder.ffmpeg.jni.FFmpegCommand
 import com.coder.ffmpeg.jni.FFmpegCommand.runCmd
@@ -34,6 +37,7 @@ import com.github.gzuliyujiang.imagepicker.SP
 //import com.coder.ffmpeg.jni.FFmpegCommand
 import com.titan.titanvideotrimmingpoc.databinding.FragmentFirstBinding
 import com.titan.titanvideotrimmingpoc.video.trim.ExtractTimmedFramesWorkThread
+import com.titan.titanvideotrimmingpoc.video.trim.SharedViewModel
 import com.titan.titanvideotrimmingpoc.video.trim.TrimVideoViewModel
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbImg
 import com.titan.titanvideotrimmingpoc.video.trim.VideoThumbSpacingItemDecoration
@@ -62,6 +66,7 @@ class FirstFragment : Fragment() {
     private val binding get() = _binding!!
     private var mExtractFrameWorkThread: ExtractTimmedFramesWorkThread? = null
     private val viewModel: TrimVideoViewModel by viewModels()
+    private lateinit var sharedViewModel:SharedViewModel
     private val thumbSpacingItemDecoration = VideoThumbSpacingItemDecoration(56.dp())
     private var trimmedVideoPath: String? = null
 
@@ -87,6 +92,7 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.i("sagar video poc", "onViewCreated")
         initViews()
+        initObservers()
         binding.buttonFirst.setOnClickListener {
 
             val intent = Intent(
@@ -97,7 +103,7 @@ class FirstFragment : Fragment() {
             startActivityForResult(intent, 2)
         }
         binding.buttonVideoCrop.setOnClickListener {
-                videoToGifHw(requireContext())
+                videoToGifHw(requireActivity())
         }
         binding.buttonTrimVideo.setOnClickListener {
             videoPathUri?.let {
@@ -121,6 +127,22 @@ class FirstFragment : Fragment() {
 //                viewModel.updateVideoFile(File(path))
             }
         }
+    }
+
+    private fun initObservers() {
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
+        sharedViewModel.pathData.observe(viewLifecycleOwner, Observer {
+            path->
+            Log.d("MyFragment", "Path received: $path")
+            binding.imageViewGif.visibility=View.VISIBLE
+            binding.playerView.visibility=View.GONE
+
+            Glide.with(this)
+                .asGif()
+                .load(path)
+                .into(binding.imageViewGif)
+        })
     }
 
     private fun initViews() {
@@ -156,7 +178,7 @@ class FirstFragment : Fragment() {
             hawoConvertVideoToGif()
         }
     }
-    fun videoToGifHw(context: Context) {
+    fun videoToGifHw(context: Activity) {
         videoPathUri?.let {
             VideoTrimmerActivity.call(
                 context,
